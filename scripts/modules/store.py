@@ -4,8 +4,33 @@ import json
 import os
 from datetime import datetime, timedelta
 
-DATA_DIR = os.path.expanduser("~/.codebuddy/skills/mindful-finance-coach/data")
-OUTPUT_DIR = os.path.expanduser("~/.codebuddy/skills/mindful-finance-coach/output")
+
+def _detect_skill_dir() -> str:
+    """自动检测 Skill 根目录，兼容多种 AI 平台安装位置"""
+    # 1. 基于本文件位置推导（最可靠：modules/store.py → skill根目录）
+    this_dir = os.path.dirname(os.path.abspath(__file__))
+    candidate = os.path.dirname(os.path.dirname(this_dir))  # scripts/modules/ → skill根目录
+    skill_md = os.path.join(candidate, "SKILL.md")
+    if os.path.exists(skill_md):
+        return candidate
+
+    # 2. CodeBuddy 默认位置
+    codebuddy_path = os.path.expanduser("~/.codebuddy/skills/mindful-finance-coach")
+    if os.path.exists(os.path.join(codebuddy_path, "SKILL.md")):
+        return codebuddy_path
+
+    # 3. Claude Code 默认位置
+    claude_path = os.path.expanduser("~/.claude/skills/mindful-finance-coach")
+    if os.path.exists(os.path.join(claude_path, "SKILL.md")):
+        return claude_path
+
+    # 4. 回退到基于本文件位置推导（即使 SKILL.md 不存在也可用）
+    return candidate
+
+
+SKILL_DIR = _detect_skill_dir()
+DATA_DIR = os.path.join(SKILL_DIR, "data")
+OUTPUT_DIR = os.path.join(SKILL_DIR, "output")
 
 BILLS_FILE = os.path.join(DATA_DIR, "bills.json")
 BUDGETS_FILE = os.path.join(DATA_DIR, "budgets.json")
