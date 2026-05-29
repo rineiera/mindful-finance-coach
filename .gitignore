@@ -1,0 +1,22 @@
+# 用户数据（绝不提交）
+data/
+*.json
+
+# 输出文件
+output/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
